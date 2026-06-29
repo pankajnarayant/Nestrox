@@ -77,12 +77,88 @@
     });
   });
 
-  /* ---------- Card clicks (placeholder) ---------- */
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card) => {
-    card.addEventListener('click', () => {
-      // Future: navigate to respective screens
+  /* ---------- Room Options Modal ---------- */
+  const cardRoom        = document.getElementById('card-room');
+  const roomBackdrop    = document.getElementById('room-modal-backdrop');
+  const roomModalClose  = document.getElementById('room-modal-close');
+
+  function openRoomModal() {
+    roomBackdrop.classList.add('open');
+    roomModalClose.focus();
+  }
+
+  function closeRoomModal() {
+    roomBackdrop.classList.remove('open');
+  }
+
+  // Open modal when "Create / Join Room" card is clicked
+  cardRoom.addEventListener('click', openRoomModal);
+
+  // Close via × button
+  roomModalClose.addEventListener('click', closeRoomModal);
+
+  // Close when clicking outside the modal card
+  roomBackdrop.addEventListener('click', (e) => {
+    if (e.target === roomBackdrop) closeRoomModal();
+  });
+
+  // Escape key closes modal too
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAllPanels();
+      closeRoomModal();
+    }
+  });
+
+  // Placeholder handlers for the two action buttons
+  document.getElementById('btn-create-room').addEventListener('click', () => {
+    // Future: navigate to Create Room screen
+    clearHints();
+    closeRoomModal();
+  });
+
+  document.getElementById('btn-join-room').addEventListener('click', () => {
+    // Future: navigate to Join Room screen
+    clearHints();
+    closeRoomModal();
+  });
+
+  /* ---------- Validation Hints (no room joined yet) ---------- */
+  const hintTimers = {};
+
+  /**
+   * Shows the hint message below the given card and auto-hides it after 3s.
+   * @param {string} hintId  — id of the <p class="card-hint"> element
+   */
+  function showHint(hintId) {
+    // Clear any existing timer for this hint
+    clearTimeout(hintTimers[hintId]);
+
+    const hint = document.getElementById(hintId);
+    hint.classList.add('visible');
+
+    hintTimers[hintId] = setTimeout(() => {
+      hint.classList.remove('visible');
+    }, 3000);
+  }
+
+  /** Hides all hint messages immediately (called on successful room entry). */
+  function clearHints() {
+    ['hint-members', 'hint-expenses'].forEach((id) => {
+      clearTimeout(hintTimers[id]);
+      const hint = document.getElementById(id);
+      if (hint) hint.classList.remove('visible');
     });
+  }
+
+  // Show hint when Add Members is clicked without a room
+  document.getElementById('card-members').addEventListener('click', () => {
+    showHint('hint-members');
+  });
+
+  // Show hint when Add Expenses is clicked without a room
+  document.getElementById('card-expenses').addEventListener('click', () => {
+    showHint('hint-expenses');
   });
 
 })();
