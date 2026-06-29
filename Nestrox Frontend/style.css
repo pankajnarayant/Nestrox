@@ -27,7 +27,11 @@ html {
 
 body {
   font-family: var(--font);
-  background: var(--bg);
+  background-image: url('../Nestrox Logo & Brand/Background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--navy);
   min-height: 100vh;
   display: flex;
