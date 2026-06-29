@@ -5,6 +5,26 @@
 (function () {
   'use strict';
 
+  /* ============================================================
+     Session Auth Guard
+     ============================================================ */
+  const SESSION_KEY = 'nestrox_session';
+  const sessionData = localStorage.getItem(SESSION_KEY);
+  
+  if (!sessionData) {
+    // Prevent unauthenticated access
+    window.location.href = 'index.html';
+    return;
+  }
+
+  let currentUser = {};
+  try {
+    currentUser = JSON.parse(sessionData);
+  } catch (e) {
+    window.location.href = 'index.html';
+    return;
+  }
+
   /* ---------- DOM References ---------- */
   const btnProfile  = document.getElementById('btn-profile');
   const btnBell     = document.getElementById('btn-bell');
@@ -12,6 +32,12 @@
   const sidebarRight = document.getElementById('sidebar-right');
   const overlay     = document.getElementById('overlay');
   const btnLogout   = document.getElementById('menu-logout');
+  const greetingEl  = document.querySelector('.sidebar__greeting');
+
+  // Set personalized welcome greeting
+  if (greetingEl && currentUser.fullName) {
+    greetingEl.textContent = `Welcome, ${currentUser.fullName}!`;
+  }
 
   /* ---------- Sidebar State ---------- */
   let activePanel = null; // 'left' | 'right' | null
@@ -64,8 +90,9 @@
     if (e.key === 'Escape') closeAllPanels();
   });
 
-  // Logout → go back to login page
+  // Logout → clear session and go back to login page
   btnLogout.addEventListener('click', () => {
+    localStorage.removeItem('nestrox_session');
     window.location.href = 'index.html';
   });
 
