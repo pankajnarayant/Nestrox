@@ -44,6 +44,9 @@ app.use((req, res, next) => {
   if (req.path.includes('Nestrox_BrandName.png')) {
     return res.sendFile(path.join(BRAND_DIR, 'Nestrox_BrandName.png'));
   }
+  if (req.path.includes('Nestrox_Brand_No_Bg.png')) {
+    return res.sendFile(path.join(BRAND_DIR, 'Nestrox_Brand_No_Bg.png'));
+  }
   if (req.path.includes('Nestrox_Logo.png')) {
     return res.sendFile(path.join(BRAND_DIR, 'Nestrox_Logo.png'));
   }
