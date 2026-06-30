@@ -1,6 +1,6 @@
 									    				NESTROX
 
-Problems:           		
+Problems:
 Rent sharing
 Groceries
 Electricity bills
@@ -34,3 +34,8 @@ Module 15: Analytics (Highest Spender: P1, Most Expense Category: Groceries, Ave
 Module 16: Room Inventory (Bachelor rooms often buy shared items. Ex; Inventory: Rice Cooker, Bought By: Pankaj, Cost: ₹1200, Ownership: Room Asset)-[When someone leaves the room, app calculates compensation.]
 
 
+Nestrox Colors:
+#1c28e4 : Blue
+#010f55 : Dark Blue
+#8118fa : Purple
+#FFFFFF : White

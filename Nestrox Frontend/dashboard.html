@@ -153,7 +153,7 @@
           <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         </div>
         <h2 class="room-modal__title" id="join-view-title">Join a Room</h2>
-        <p class="room-modal__subtitle">Enter the 6-digit room code below</p>
+        <p class="room-modal__subtitle">Enter the 6-character room code below</p>
         <div class="join-room-input-wrap">
           <input
             type="text"
@@ -173,8 +173,113 @@
           <span>Join Room</span>
         </button>
       </div>
+
+      <!-- View 3: Create Room form -->
+      <div class="room-modal__view room-modal__view--hidden" id="room-view-create" aria-labelledby="create-view-title">
+
+        <!-- Header row: back button + room code badge -->
+        <div class="create-room-header">
+          <button class="room-modal__back" id="btn-back-from-create" aria-label="Back to options">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            <span>Back</span>
+          </button>
+          <div class="create-room-code-badge" aria-label="Generated room code">
+            <span class="create-room-code-label">Room Code:</span>
+            <span class="create-room-code-value" id="generated-room-code">——————</span>
+          </div>
+        </div>
+
+        <h2 class="room-modal__title" id="create-view-title">Create a Room</h2>
+        <p class="room-modal__subtitle">Fill in the details for your new room</p>
+
+        <form class="create-room-form" id="create-room-form" novalidate>
+
+          <!-- Room Name -->
+          <div class="cr-field">
+            <div class="cr-field-header">
+              <label class="cr-label" for="cr-room-name">Room Name <span class="cr-required">*</span></label>
+              <span class="cr-char-hint" id="cr-name-hint" aria-live="polite">0 / 12</span>
+            </div>
+            <input
+              type="text"
+              id="cr-room-name"
+              class="cr-input"
+              placeholder="e.g. Flat 4B"
+              maxlength="12"
+              autocomplete="off"
+              required
+              aria-describedby="cr-name-error"
+            />
+            <p class="cr-error" id="cr-name-error" aria-live="polite"></p>
+          </div>
+
+          <!-- Room Description -->
+          <div class="cr-field">
+            <div class="cr-field-header">
+              <label class="cr-label" for="cr-room-desc">Room Description <span class="cr-optional">(Optional)</span></label>
+              <span class="cr-char-hint" id="cr-desc-hint" aria-live="polite">0 / 30</span>
+            </div>
+            <input
+              type="text"
+              id="cr-room-desc"
+              class="cr-input"
+              placeholder="e.g. Shared house expenses"
+              maxlength="30"
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Max Roommates -->
+          <div class="cr-field">
+            <div class="cr-field-header">
+              <label class="cr-label" id="cr-roommates-label">Maximum Roommates</label>
+            </div>
+            <!-- Custom modern dropdown select container -->
+            <div class="cr-custom-select" id="cr-max-roommates-dropdown">
+              <button type="button" class="cr-select-trigger" id="cr-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cr-roommates-label cr-select-trigger-value">
+                <span id="cr-select-trigger-value">4</span>
+                <svg class="cr-select-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+              </button>
+              <div class="cr-select-options" role="listbox" id="cr-select-listbox" aria-labelledby="cr-roommates-label">
+                <div class="cr-select-option" role="option" data-value="1">1</div>
+                <div class="cr-select-option" role="option" data-value="2">2</div>
+                <div class="cr-select-option" role="option" data-value="3">3</div>
+                <div class="cr-select-option cr-select-option--selected" role="option" data-value="4" aria-selected="true">4</div>
+                <div class="cr-select-option" role="option" data-value="5">5</div>
+                <div class="cr-select-option" role="option" data-value="6">6</div>
+                <div class="cr-select-option" role="option" data-value="7">7</div>
+                <div class="cr-select-option" role="option" data-value="8">8</div>
+                <div class="cr-select-option" role="option" data-value="9">9</div>
+                <div class="cr-select-option" role="option" data-value="10">10</div>
+              </div>
+            </div>
+            <!-- Hidden native select for standard JS form collection -->
+            <select id="cr-max-roommates" class="cr-select-hidden" aria-hidden="true" tabindex="-1" style="display: none;">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4" selected>4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="room-action-btn room-action-btn--create" id="btn-confirm-create">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            <span>Create Room</span>
+          </button>
+
+        </form>
+      </div>
+
     </div>
   </div>
+
 
   <script src="dashboard.js"></script>
 </body>

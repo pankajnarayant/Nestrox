@@ -954,3 +954,301 @@ body {
   }
 }
 
+/* ============================================================
+   Create Room — View 3
+   ============================================================ */
+
+/* ---- Header row (Back ← | Room Code badge) ---- */
+.create-room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+/* Room code badge (top-right) */
+.create-room-code-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(28, 40, 228, 0.06);
+  border: 1.5px solid rgba(28, 40, 228, 0.15);
+  border-radius: 10px;
+  padding: 5px 12px 5px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.create-room-code-label {
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #010f55;
+  letter-spacing: 0.02em;
+}
+
+.create-room-code-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1c28e4;
+  letter-spacing: 0.18em;
+}
+
+/* ---- Form layout ---- */
+.create-room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 14px;
+}
+
+/* Each label + input group */
+.cr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* Header row inside a field (label + char count) */
+.cr-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Labels */
+.cr-label {
+  font-family: var(--font);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #010f55;
+  letter-spacing: 0.015em;
+  margin: 0;
+}
+
+.cr-required {
+  color: #8118fa;
+  margin-left: 2px;
+}
+
+.cr-optional {
+  font-weight: 400;
+  color: rgba(1, 15, 85, 0.45);
+  font-size: 0.75rem;
+}
+
+/* Text inputs */
+.cr-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  background: #ffffff;
+  border: 2px solid #8118fa;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #010f55;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 6px rgba(129, 24, 250, 0.08);
+  caret-color: #8118fa;
+}
+
+.cr-input::placeholder {
+  color: #b8b8c4;
+  font-weight: 400;
+}
+
+.cr-input:focus {
+  border-color: #8118fa;
+  box-shadow: 0 0 0 3px rgba(129, 24, 250, 0.13), 0 1px 6px rgba(129, 24, 250, 0.1);
+}
+
+.cr-input.input--invalid {
+  border-color: #e0262a;
+  box-shadow: 0 0 0 3px rgba(224, 38, 42, 0.12);
+  animation: shake 0.32s ease;
+}
+
+/* Character counter hint */
+.cr-char-hint {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(1, 15, 85, 0.38);
+  text-align: right;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+}
+
+.cr-char-hint.cr-char-hint--near {
+  color: #e07818;
+}
+
+.cr-char-hint.cr-char-hint--full {
+  color: #e0262a;
+}
+
+/* Inline error */
+.cr-error {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e0262a;
+  display: none;
+  margin: 2px 0 0 0;
+}
+
+.cr-error.visible {
+  display: block;
+}
+
+/* ---- Custom Select Dropdown Widget ---- */
+.cr-custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.cr-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  background: #ffffff;
+  border: 2px solid #8118fa;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #010f55;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 6px rgba(129, 24, 250, 0.08);
+  text-align: left;
+}
+
+.cr-select-trigger:focus {
+  border-color: #8118fa;
+  box-shadow: 0 0 0 3px rgba(129, 24, 250, 0.13), 0 1px 6px rgba(129, 24, 250, 0.1);
+}
+
+.cr-select-arrow {
+  width: 20px;
+  height: 20px;
+  fill: #8118fa;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cr-custom-select.open .cr-select-arrow {
+  transform: rotate(180deg);
+}
+
+/* Custom Options Dropdown Box */
+.cr-select-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 2px solid #8118fa;
+  border-radius: 10px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  box-shadow: 0 8px 24px rgba(1, 15, 85, 0.15);
+  scrollbar-width: thin;
+}
+
+.cr-custom-select.open .cr-select-options {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.cr-select-option {
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #010f55;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cr-select-option:hover {
+  background: rgba(129, 24, 250, 0.08);
+  color: #8118fa;
+}
+
+.cr-select-option.cr-select-option--selected {
+  background: #8118fa;
+  color: #ffffff;
+}
+
+.cr-select-option.cr-select-option--selected:hover {
+  background: #6e0fe0;
+  color: #ffffff;
+}
+
+/* ---- Create Room submit button ---- */
+.room-action-btn--create {
+  background: linear-gradient(135deg, #1c28e4 0%, #8118fa 100%);
+  box-shadow: 0 4px 18px rgba(28, 40, 228, 0.32);
+  margin-top: 6px;
+}
+
+.room-action-btn--create:hover {
+  background: linear-gradient(135deg, #2a38f5 0%, #9130ff 100%);
+  box-shadow: 0 8px 28px rgba(28, 40, 228, 0.42);
+  transform: translateY(-2px);
+}
+
+.room-action-btn--create:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(28, 40, 228, 0.22);
+}
+
+/* ---- Wider modal for the create form ---- */
+.room-modal.room-modal--wide {
+  max-width: 440px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .create-room-code-badge {
+    padding: 4px 9px 4px 8px;
+  }
+
+  .create-room-code-value {
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+  }
+
+  .cr-input,
+  .cr-select-trigger,
+  .cr-select-option {
+    font-size: 0.875rem;
+  }
+
+  .cr-input,
+  .cr-select-trigger {
+    height: 40px;
+  }
+
+  .cr-select-option {
+    padding: 8px 12px;
+  }
+}

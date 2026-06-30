@@ -152,8 +152,253 @@
     }
   });
 
-  // Create Room → placeholder (future implementation)
+  /* ---------- Create Room — view switching, code generator & form ---------- */
+  const viewCreate      = document.getElementById('room-view-create');
+  const generatedCode   = document.getElementById('generated-room-code');
+  const roomModal       = document.getElementById('room-modal');
+  const crNameInput     = document.getElementById('cr-room-name');
+  const crNameHint      = document.getElementById('cr-name-hint');
+  const crNameError     = document.getElementById('cr-name-error');
+  const crDescInput     = document.getElementById('cr-room-desc');
+  const crDescHint      = document.getElementById('cr-desc-hint');
+  const crForm          = document.getElementById('create-room-form');
+
+  /** Generate a random 6-char uppercase alphanumeric code. */
+  function generateRoomCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  }
+
+  /** Show the Create Room form view. */
+  function showCreateView() {
+    viewOptions.classList.add('room-modal__view--hidden');
+    viewCreate.classList.remove('room-modal__view--hidden');
+    viewCreate.style.animation = 'none';
+    void viewCreate.offsetWidth;
+    viewCreate.style.animation = '';
+    // Widen modal to fit the form
+    roomModal.classList.add('room-modal--wide');
+    // Fresh room code every time the view opens
+    generatedCode.textContent = generateRoomCode();
+    crNameInput.focus();
+  }
+
+  /** Reset and hide the Create Room form, return to options. */
+  function hideCreateView() {
+    viewCreate.classList.add('room-modal__view--hidden');
+    viewOptions.classList.remove('room-modal__view--hidden');
+    viewOptions.style.animation = 'none';
+    void viewOptions.offsetWidth;
+    viewOptions.style.animation = '';
+    roomModal.classList.remove('room-modal--wide');
+    resetCreateForm();
+  }
+  /** Reset all create-room form fields and error states. */
+  function resetCreateForm() {
+    crForm.reset();
+    crNameHint.textContent = '0 / 12';
+    crNameHint.className = 'cr-char-hint';
+    crDescHint.textContent = '0 / 30';
+    crDescHint.className = 'cr-char-hint';
+    crNameError.textContent = '';
+    crNameError.classList.remove('visible');
+    crNameInput.classList.remove('input--invalid');
+    generatedCode.textContent = '——————';
+    // Reset custom dropdown to 4
+    const defaultVal = 4;
+    const triggerVal = document.getElementById('cr-select-trigger-value');
+    if (triggerVal) {
+      triggerVal.textContent = String(defaultVal);
+    }
+    const hiddenSelect = document.getElementById('cr-max-roommates');
+    if (hiddenSelect) {
+      hiddenSelect.value = defaultVal;
+    }
+    
+    const dropdownOptions = document.querySelectorAll('.cr-select-option');
+    dropdownOptions.forEach(opt => {
+      if (opt.getAttribute('data-value') === String(defaultVal)) {
+        opt.classList.add('cr-select-option--selected');
+        opt.setAttribute('aria-selected', 'true');
+      } else {
+        opt.classList.remove('cr-select-option--selected');
+        opt.removeAttribute('aria-selected');
+      }
+    });
+  }
+
+  /* ---------- Custom Dropdown Listbox Logic ---------- */
+  const crDropdown = document.getElementById('cr-max-roommates-dropdown');
+  const crTrigger  = document.getElementById('cr-select-trigger');
+  const crHiddenSelect = document.getElementById('cr-max-roommates');
+  const crTriggerValue = document.getElementById('cr-select-trigger-value');
+  const crOptionsList = document.querySelectorAll('.cr-select-option');
+
+  function toggleDropdown() {
+    const isOpen = crDropdown.classList.contains('open');
+    if (isOpen) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
+  }
+
+  function openDropdown() {
+    crDropdown.classList.add('open');
+    crTrigger.setAttribute('aria-expanded', 'true');
+    // Scroll the selected option into view if possible
+    const selectedOpt = crDropdown.querySelector('.cr-select-option--selected');
+    if (selectedOpt) {
+      selectedOpt.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function closeDropdown() {
+    crDropdown.classList.remove('open');
+    crTrigger.setAttribute('aria-expanded', 'false');
+    crTrigger.focus();
+  }
+
+  function selectOption(optionEl) {
+    const val = optionEl.getAttribute('data-value');
+    const txt = optionEl.textContent.trim();
+    
+    // Update trigger text and native hidden select
+    crTriggerValue.textContent = txt;
+    crHiddenSelect.value = val;
+    
+    // Update highlight class and accessibility attrs
+    crOptionsList.forEach(opt => {
+      opt.classList.remove('cr-select-option--selected');
+      opt.removeAttribute('aria-selected');
+    });
+    optionEl.classList.add('cr-select-option--selected');
+    optionEl.setAttribute('aria-selected', 'true');
+    
+    closeDropdown();
+  }
+
+  crTrigger.addEventListener('click', toggleDropdown);
+
+  crOptionsList.forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectOption(opt);
+    });
+    
+    // Support tabIndex for accessibility focus
+    opt.setAttribute('tabindex', '-1');
+  });
+
+  // Click outside to close
+  document.addEventListener('click', (e) => {
+    if (crDropdown && !crDropdown.contains(e.target)) {
+      crDropdown.classList.remove('open');
+      crTrigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Keyboard navigation
+  crDropdown.addEventListener('keydown', (e) => {
+    const isOpen = crDropdown.classList.contains('open');
+    const optionsArr = Array.from(crOptionsList);
+    const activeIndex = optionsArr.findIndex(opt => opt.classList.contains('cr-select-option--selected'));
+    
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!isOpen) {
+        openDropdown();
+        return;
+      }
+      let nextIndex = activeIndex;
+      if (e.key === 'ArrowDown') {
+        nextIndex = (activeIndex + 1) % optionsArr.length;
+      } else if (e.key === 'ArrowUp') {
+        nextIndex = (activeIndex - 1 + optionsArr.length) % optionsArr.length;
+      }
+      
+      optionsArr.forEach(opt => {
+        opt.classList.remove('cr-select-option--selected');
+        opt.removeAttribute('aria-selected');
+      });
+      optionsArr[nextIndex].classList.add('cr-select-option--selected');
+      optionsArr[nextIndex].setAttribute('aria-selected', 'true');
+      optionsArr[nextIndex].scrollIntoView({ block: 'nearest' });
+      
+      // Update value
+      crTriggerValue.textContent = optionsArr[nextIndex].textContent.trim();
+      crHiddenSelect.value = optionsArr[nextIndex].getAttribute('data-value');
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (isOpen) {
+        const currentSel = optionsArr[activeIndex];
+        if (currentSel) {
+          selectOption(currentSel);
+        }
+      } else {
+        openDropdown();
+      }
+    } else if (e.key === 'Escape') {
+      if (isOpen) {
+        e.preventDefault();
+        closeDropdown();
+      }
+    }
+  });
+
+  /** Update a character counter hint element. */
+  function updateCharHint(hint, current, max) {
+    hint.textContent = `${current} / ${max}`;
+    hint.className = 'cr-char-hint';
+    if (current >= max)        hint.classList.add('cr-char-hint--full');
+    else if (current >= max * 0.75) hint.classList.add('cr-char-hint--near');
+  }
+
+  // "Create a Room" button → open create form view
   document.getElementById('btn-create-room').addEventListener('click', () => {
+    showCreateView();
+  });
+
+  // Back button inside create view → return to options
+  document.getElementById('btn-back-from-create').addEventListener('click', hideCreateView);
+
+  // Live character counters
+  crNameInput.addEventListener('input', () => {
+    updateCharHint(crNameHint, crNameInput.value.length, 12);
+    // Clear error as user types
+    if (crNameError.classList.contains('visible')) {
+      crNameError.classList.remove('visible');
+      crNameInput.classList.remove('input--invalid');
+    }
+  });
+
+  crDescInput.addEventListener('input', () => {
+    updateCharHint(crDescHint, crDescInput.value.length, 30);
+  });
+
+  // Form submission — validate then hand off
+  crForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = crNameInput.value.trim();
+    if (!name) {
+      crNameError.textContent = 'Room name is required.';
+      crNameError.classList.add('visible');
+      crNameInput.classList.add('input--invalid');
+      setTimeout(() => crNameInput.classList.remove('input--invalid'), 350);
+      crNameInput.focus();
+      return;
+    }
+    const roomData = {
+      name,
+      description : crDescInput.value.trim(),
+      maxRoommates: parseInt(document.getElementById('cr-max-roommates').value, 10),
+      code        : generatedCode.textContent,
+    };
+    // TODO: POST roomData to /api/rooms
     clearHints();
     closeRoomModal();
   });
@@ -179,12 +424,16 @@
   /** Return to the options view and reset the input. */
   function showOptionsView() {
     viewJoin.classList.add('room-modal__view--hidden');
+    viewCreate.classList.add('room-modal__view--hidden');
     viewOptions.classList.remove('room-modal__view--hidden');
     // Restart animation for options view too
     viewOptions.style.animation = 'none';
     void viewOptions.offsetWidth;
     viewOptions.style.animation = '';
+    // Restore default modal width
+    roomModal.classList.remove('room-modal--wide');
     resetJoinInput();
+    resetCreateForm();
   }
 
   /** Clear input value and error states. */
@@ -234,7 +483,7 @@
   document.getElementById('btn-confirm-join').addEventListener('click', () => {
     const code = roomCodeInput.value.trim();
     if (code.length !== 6) {
-      showJoinError('Please enter a valid 6-digit room code.');
+      showJoinError('Please enter a valid 6-character room code.');
       roomCodeInput.focus();
       return;
     }
